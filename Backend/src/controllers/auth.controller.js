@@ -2,15 +2,28 @@ import userModel from "../models/user.model.js";
 import jwt from 'jsonwebtoken'
 import { config } from "dotenv";
 
-async function sendTokeenRespones(user,res) {
+async function sendTokeenRespones(user,res,meassage) {
     const token = jwt.sign({
         id:user._id
-    },config.JWT.SECRET)
-    
+    },config.JWT.SECRET,{
+        expiresIn:"7d"
+    })
+
+    res.cookie("token",token)
+    res.status(200).json({
+        token,
+        user:{
+            id:user._id,
+            email:user.email,
+            contact:user.contact,
+            fullname:user.fullname,
+            rote:user.role
+        }
+    })
 }
 
 export const register = async (req,res)=>{
-    const {email,password,contact,fullname}  = req.body;
+    const {email,password,contact,fullname,isSeller}  = req.body;
 
     try{
         const existUser = await userModel.findOne({
@@ -23,8 +36,10 @@ export const register = async (req,res)=>{
             email,
             contact,
             password,
-            fullname
+            fullname,
+            role:isSeller?"seller":"buyer"
         })
+        await sendTokeenRespones(user,res,"register successfully");
 
 
     }catch(err){console.lof(err);
