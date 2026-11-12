@@ -2,10 +2,11 @@ import { body, validationResult } from 'express-validator'
 
 
 function validateRequest(req,res,next){
-    const err = validationResult(req);
-    if(!err.isEmpty()){
+    const errors = validationResult(req).array();
+    if(errors.length > 0){
         return res.status(400).json({
-            error:err.array()
+            message: errors[0].msg,
+            errors
         });
     }
     next();
@@ -16,7 +17,7 @@ export const validateRegisterUser = [
         .isEmail().withMessage("Invalid email format "),
     body("contact")
         .notEmpty().withMessage("contact is required ")
-        .matches(/^\d{10}/).withMessage(" contant must be 10-digit number "),
+        .matches(/^\d{10}$/).withMessage("Contact must be a 10-digit number."),
     body('password')
         .isLength({min:6}).withMessage("password must be atleast 6 charcters long"),
     body("fullname")
