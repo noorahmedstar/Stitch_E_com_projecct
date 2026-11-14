@@ -2,7 +2,7 @@ import userModel from "../models/user.model.js";
 import jwt from 'jsonwebtoken'
 import { config } from "../config/config.js";
 
-function sendTokenResponse(user, res) {
+function sendTokenResponse(user, res, status = 201) {
     const token = jwt.sign({
         id:user._id
     },config.JWT_SECRET,{
@@ -14,7 +14,7 @@ function sendTokenResponse(user, res) {
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production"
     })
-    return res.status(201).json({
+    return res.status(status).json({
         token,
         user:{
             id:user._id,
@@ -60,3 +60,20 @@ export const register = async (req,res)=>{
 
 
 }
+
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await userModel.findOne({ email: email.trim().toLowerCase() });
+
+        if (!user || !(await user.comparePassword(password))) {
+            return res.status(401).json({ message: "Invalid email or password." });
+        }
+
+        return sendTokenResponse(user, res, 200);
+    } catch (err) {
+        console.error("Login failed:", err);
+        return res.status(500).json({ message: "Server error." });
+    }
+};

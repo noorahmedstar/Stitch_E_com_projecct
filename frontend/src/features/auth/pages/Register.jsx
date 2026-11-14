@@ -72,7 +72,7 @@ const Register = () => {
           <div className="flex items-center gap-3 text-sm">
             <span className="text-slate-500 hidden sm:inline">Already have an account?</span>
             <a
-              href="#signin"
+              href="/login"
               className="inline-flex items-center px-4 py-1.5 rounded-lg border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-colors"
             >
               Sign In
