@@ -1,12 +1,17 @@
 import { useState } from 'react'
 import { useAuth } from '../hook/useAuth'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
+import { getGoogleAuthUrl } from '../services/auth.api'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
 const Register = () => {
   const { handleRegister, loading, error } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const googleAuthError = searchParams.get('error')
+    ? 'Google sign-in failed. Please try again or use the registration form.'
+    : ''
 
   const [formData, setFormData] = useState({
     fullname: '',
@@ -50,8 +55,8 @@ const Register = () => {
     const result = await handleRegister(formData)
     if (result?.success) {
       setSuccessMessage('Registration successful! Welcome aboard.')
+      navigate("/")
     }
-    navigate("/")
 }
 
 
@@ -179,7 +184,7 @@ const Register = () => {
                 <svg className="w-5 h-5 shrink-0 text-rose-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>{error}</span>
+                <span>{error || googleAuthError}</span>
               </div>
             )}
 
@@ -196,6 +201,7 @@ const Register = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
               <button
                 type="button"
+                onClick={() => window.location.assign(getGoogleAuthUrl(formData.isSeller))}
                 className="flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-sm transition-all shadow-2xs active:scale-[0.99]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">

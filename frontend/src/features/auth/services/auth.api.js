@@ -23,3 +23,10 @@
     })
     return response.data
  }
+
+ export function getGoogleAuthUrl(isSeller = false) {
+    return authApiInstance.getUri({
+        url: '/google',
+        params: isSeller ? { role: 'seller' } : undefined,
+    })
+ }
