@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    title:{
+    name:{
         type:String,
         required:true,
     },
-    descripation:{
+    description:{
+        type:String,
+        required:true
+    },
+    category:{
         type:String,
         required:true
     },
@@ -15,15 +19,13 @@ const productSchema = new mongoose.Schema({
         required:true
     },
     price:{
-        amount:{
-            type:Number,
-            required:true
-        },
-        currency:{
-            type:String,
-            enum:["USD","EUR","GBP","JPY","INR"],
-            default:"INR"
-        }
+        type:Number,
+        required:true
+    },
+    stock:{
+        type:Number,
+        required:true,
+        min:0
     },
     images:[{
         url:{
@@ -35,7 +37,7 @@ const productSchema = new mongoose.Schema({
             required:true
         }
     }]
-},{timeseries:true})
+},{timestamps:true})
 
 const ProductModel = mongoose.model("product",productSchema);
 export default ProductModel

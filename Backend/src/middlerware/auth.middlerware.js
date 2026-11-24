@@ -6,7 +6,7 @@ export const authenticateSeller = async (req,res,next)=>{
     const token = req.cookies.token
 
     if(!token){
-        return res.status(401).json({message:"unauthorized"})
+        return res.status(401).json({message:"Please sign in to manage products."})
     }
 
     try{
@@ -14,17 +14,17 @@ export const authenticateSeller = async (req,res,next)=>{
 
         const user = await userMOdel.findById(decoded.id)
         if(!user){
-             return res.status(401).json({message:"unauthorized"})
+             return res.status(401).json({message:"Your session is invalid. Please sign in again."})
         }
         if(user.role !=='seller'){
-             return res.status(401).json({message:"forbidden"})
+             return res.status(403).json({message:"A seller account is required to manage products."})
         }
         req.user = user
         next()
 
     }catch(err){
-        console.log(err);
-         return res.status(401).json({message:"unauthorized"}) 
+        console.error("Seller authentication failed:", err);
+         return res.status(401).json({message:"Your session is invalid or expired. Please sign in again."})
 
     }
 

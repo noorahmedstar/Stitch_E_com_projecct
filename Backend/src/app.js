@@ -1,4 +1,4 @@
-import express, { application } from "express";
+import express from "express";
 import morgan from "morgan";
 import authRouter from './routes/auth.routes.js'
 import productRouter from './routes/Product.routes.js'
@@ -36,5 +36,6 @@ passport.use(new GoogleStrategy({
 app.use(express.json());
 app.use('/api/auth',authRouter)
 app.use('/api/product',productRouter)
+app.use('/api/products',productRouter)
 
 export default app;

@@ -8,10 +8,18 @@ function setAuthCookie(user, res) {
     },config.JWT_SECRET,{
         expiresIn:"7d"
     })
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        path: "/api/auth"
+    })
     res.cookie("token", token, {
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production"
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000
     })
     return token;
 }
